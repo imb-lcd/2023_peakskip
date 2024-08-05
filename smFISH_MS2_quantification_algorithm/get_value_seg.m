@@ -1,4 +1,3 @@
-%% initialize
 %% load nucleus segmentation
 fname = fname_seg;
 [filepath,name,ext] = fileparts(fname);
@@ -20,6 +19,3 @@ value_seg = NaN(size(col));
 for j = 1:size(col,1)
     value_seg(j) = idx(j);
 end
-% save(fname_value_seg,"value_seg")
-% clearvars -except ms2_data pos wb
-% close all

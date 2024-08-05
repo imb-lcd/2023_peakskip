@@ -1,71 +1,47 @@
-clear;
-% clc
-% addpath('./Track data');
+%% Initialize environment
+clear; close all; clc
+
+%% Quantify the signal intenstiy
 ms2_data=[];
 smFISH_data=[];
 idx_data=[];
-% ms2_mean_data=[];
-% ms2_median_data=[];
 ksp_data=[];
 img_data=[];
 
-tic
-% wb = waitbar(0,'Please wait...','Name','MS2 quantification');
+for pos=1:9
+    % 1. get value_seg for all tracked cells
+    fname_seg = sprintf('./Track data/seg_xy%d.tif',pos);
+    load(sprintf('./Track data/centroid_xy%d.mat',pos));
+    % use analyzed tracking file
+    get_value_seg
 
-for pos=1:9%2
+    % 2. detect foci
+    fname_label = sprintf('./Track data/seg_xy%d.tif',pos);
+    fname_foci = sprintf('./Track data/MS2_xy%d_aligned.tif',pos);
+    fname_pxprob...
+        = sprintf('./Track data/MS2_xy%d_aligned_Probabilities.tiff',pos);
+    fname_smFISH = sprintf('./Track data/Cy5_xy%d.tif',pos);
+    pixel_filter5_pxprob_curate
     
-% 1. get value_seg for all tracked cells
-fname_seg = sprintf('./Track data/seg_xy%d.tif',pos);
-load(sprintf('./Track data/centroid_xy%d.mat',pos));
-% use analyzed tracking file
-get_value_seg
-
-% waitbar((1/6)*(pos-1),wb,sprintf('Position %d',pos));
-
-% 2. detect foci
-fname_label = sprintf('./Track data/seg_xy%d.tif',pos);
-fname_foci = sprintf('./Track data/MS2_xy%d_aligned.tif',pos)
-fname_pxprob...
-    = sprintf('./Track data/MS2_xy%d_aligned_Probabilities.tiff',pos);
-fname_smFISH = sprintf('./Track data/Cy5_xy%d.tif',pos);
-
-pixel_filter5_pxprob_curate
-
-ms2_data=[ms2_data;ms2_array];
-smFISH_data=[smFISH_data;smFISH_array];
-idx_data=[idx_data;cen_idx];
-% ms2_mean_data=[ms2_mean_data;ms2_mean];
-% ms2_median_data=[ms2_median_data;ms2_median];
-ksp_data=[ksp_data;ksp];
-img_data=[img_data;img_array];
-
-% save('MS2_vs_smFISH.mat','ms2_data','smFISH_data');
-
-% % For stability
-% poolobj = gcp('nocreate');
-% delete(poolobj);
+    % collate data
+    ms2_data=[ms2_data;ms2_array];
+    smFISH_data=[smFISH_data;smFISH_array];
+    idx_data=[idx_data;cen_idx];
+    ksp_data=[ksp_data;ksp];
+    img_data=[img_data;img_array];
 
 end
 
-% close(wb)
-toc
-
-%3. Save
+% 3. Save
 badQuant=or(isnan(ms2_data),isinf(ms2_data));
 smFISH_data(badQuant)=[];
 ms2_data(badQuant)=[];
 idx_data(badQuant)=[];
 ksp_data(badQuant)=[];
 img_data(badQuant)=[];
-% save('MS2_vs_smFISH_sz25_ksp_img.mat','ms2_data','smFISH_data','idx_data'...
-%     ,'ksp_data','img_data');
-%%
-% validCells = and(log(smFISH_data)>4.75,log(ms2_data)>-.5);
-% validCells = log(smFISH_data)>3;
-% validCells = or(ms2_mean_data>50,ms2_median_data>50);
-validCells = log10(ksp_data)>-40;
 
-%%
+%% Keep valid cells
+validCells = log10(ksp_data)>-40;
 ms2_data=ms2_data(validCells);
 smFISH_data=smFISH_data(validCells);
 idx_data=idx_data(validCells); 
@@ -73,7 +49,6 @@ ksp_data=ksp_data(validCells);
 img_data=img_data(validCells);
 
 %% Downsampling
-% rng(2);
 rng(2)
 [Y,E]=discretize(log(ms2_data),(-6.25:0.5:2));
 
@@ -111,10 +86,6 @@ for i=1:length(binned_ms2)
     img_data_ds=[img_data_ds;binned_img{i}];
     
 end
-
-% validCells = log(ms2_data_ds)>-2.5;
-% validCells = ~and(log(smFISH_data_ds)>3,log(ms2_data_ds)<-1);
-% validCells = log(ms2_data_ds)>-2.5;
 
 %% curate
 badCells=[2,6,7,9,12,26,35,49,78,79,123,126];

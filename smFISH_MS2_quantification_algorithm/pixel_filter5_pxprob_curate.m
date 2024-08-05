@@ -43,13 +43,11 @@ ms2_median=NaN(size(v));
 ksp=NaN(size(v));
 cen_idx=[pos*ones(size(v)),NaN(size(v))];
 SE=strel('disk',25);
-% SE1=strel('disk',2);
 
 close all
 parfor u=1:length(v)
     
     tmp = seg==value_seg(u);
-%     tmp = imerode(tmp,SE1);
     if any(tmp,'all') % if the segmented nucleus matches the tracked cell
         z = double(imgaussfilt(mCherry,1)).*tmp;
         p = double(imgaussfilt(px_prob,1)).*tmp;
