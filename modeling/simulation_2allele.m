@@ -1,11 +1,8 @@
 %% Initialize
 clear; close all; clc
 
-% Add path
-addpath(genpath("../model_data"));
-
 %% Stochiometry
-S = readtable('/stoichiometry.txt');
+S = readtable('stoichiometry.txt');
 S = table2array(S(1:11,2:23));
 
 %% Parameters

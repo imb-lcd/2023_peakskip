@@ -2,7 +2,7 @@
 clear; close all; clc
 
 %% Stochiometry
-S = readtable('../model_data/stoichiometry.txt');
+S = readtable('stoichiometry.txt');
 S = table2array(S(1:11,2:23));
 
 %% Parameters
