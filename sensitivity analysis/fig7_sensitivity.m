@@ -42,30 +42,30 @@ idx = find(tbl.isConstp53==0 & tbl.isQ==1 & tbl.nAlelles==2);
 ct = load("simulation_result_v2_ct.mat");
 kd1 = load("simulation_result_v2_kd1.mat");
 
-ct.tbl.Properties.VariableNames(6:9) = "ct_"+ct.tbl.Properties.VariableNames(6:9);
-kd1.tbl.Properties.VariableNames(6:9) = "kd1_"+kd1.tbl.Properties.VariableNames(6:9);
+ct.tbl.Properties.VariableNames(6:8) = "ct_"+ct.tbl.Properties.VariableNames(6:8);
+kd1.tbl.Properties.VariableNames(6:8) = "kd1_"+kd1.tbl.Properties.VariableNames(6:8);
 
-tbl = [ct.tbl,kd1.tbl(:,6:9)];
+tbl = [ct.tbl,kd1.tbl(:,6:8)];
 tbl = tbl(idx,:);
 
 clearvars -except tbl
 
 %% summarize data
-s = RandStream('dsfmt19937','Seed',4088);
-id_sim = randperm(s,2000,500);
+% s = RandStream('dsfmt19937','Seed',4088);
+% id_sim = randperm(s,2000,500);
 
 % the first moment (i.e., mean of amplitude and period)
 tbl2 = tbl;
-for i = 6:13
+for i = 6:11
     v = tbl2.Properties.VariableNames(i);
-    tbl2.(v{1}) = cellfun(@(s)mean(s(id_sim)),tbl2.(v{1}));
+    tbl2.(v{1}) = cellfun(@(s)mean(s),tbl2.(v{1}));
 end
 
 % the second moment (i.e., standard deviation of amplitude and period)
 tbl5 = tbl;
-for i = 6:13
+for i = 6:11
     v = tbl5.Properties.VariableNames(i);
-    tbl5.(v{1}) = cellfun(@(s)std(s(id_sim)),tbl5.(v{1}));
+    tbl5.(v{1}) = cellfun(@(s)std(s),tbl5.(v{1}));
 end
 
 %% multiple allele, sensitivity of p53 amplitude/period, Q, control p53 or not
@@ -81,22 +81,22 @@ for i = 1:length(name_paras)
         tmp = tbl2(idx,:);
         tbl3 = [tbl3;tmp.isConstp53(1),tmp.isQ(1),tmp.nAlelles(1),i,....
             {tmp.ct_p53period([1 3 2])'} {tmp.ct_skip1_prob([1 3 2])'},...
-            {tmp.ct_IPI([1 3 2])'} {tmp.ct_p53amp([1 3 2])'},...
+            {tmp.ct_p53amp([1 3 2])'},...
             {tmp.kd1_p53period([1 3 2])'} {tmp.kd1_skip1_prob([1 3 2])'},...
-            {tmp.kd1_IPI([1 3 2])'} {tmp.kd1_p53amp([1 3 2])'}];  
+            {tmp.kd1_p53amp([1 3 2])'}];  
 
         tmp = tbl5(idx,:);
         tbl6 = [tbl6;tmp.isConstp53(1),tmp.isQ(1),tmp.nAlelles(1),i,....
             {tmp.ct_p53period([1 3 2])'} {tmp.ct_skip1_prob([1 3 2])'},...
-            {tmp.ct_IPI([1 3 2])'} {tmp.ct_p53amp([1 3 2])'},...
+            {tmp.ct_p53amp([1 3 2])'},...
             {tmp.kd1_p53period([1 3 2])'} {tmp.kd1_skip1_prob([1 3 2])'},...
-            {tmp.kd1_IPI([1 3 2])'} {tmp.kd1_p53amp([1 3 2])'}];  
+            {tmp.kd1_p53amp([1 3 2])'}];  
     end
 end
 tbl3 = array2table(tbl3);
 tbl3.Properties.VariableNames = ["isConstp53" "isQ" "nAlelles" "name_parameter",...
-    "ct_p53period","ct_skip1_prob","ct_IPI","ct_p53amp",...
-    "kd1_p53period","kd1_skip1_prob","kd1_IPI","kd1_p53amp"];
+    "ct_p53period","ct_skip1_prob","ct_p53amp",...
+    "kd1_p53period","kd1_skip1_prob","kd1_p53amp"];
 tbl3.isConstp53 = cellfun(@(s)s,tbl3.isConstp53);
 tbl3.isQ = cellfun(@(s)s,tbl3.isQ);
 tbl3.nAlelles = cellfun(@(s)s,tbl3.nAlelles);
@@ -107,8 +107,8 @@ tbl3 = tbl3(I,:);
 
 tbl6 = array2table(tbl6);
 tbl6.Properties.VariableNames = ["isConstp53" "isQ" "nAlelles" "name_parameter",...
-    "ct_p53period","ct_skip1_prob","ct_IPI","ct_p53amp",...
-    "kd1_p53period","kd1_skip1_prob","kd1_IPI","kd1_p53amp"];
+    "ct_p53period","ct_skip1_prob","ct_p53amp",...
+    "kd1_p53period","kd1_skip1_prob","kd1_p53amp"];
 tbl6.isConstp53 = cellfun(@(s)s,tbl6.isConstp53);
 tbl6.isQ = cellfun(@(s)s,tbl6.isQ);
 tbl6.nAlelles = cellfun(@(s)s,tbl6.nAlelles);
@@ -118,19 +118,19 @@ tbl6.name_parameter = cellfun(@(s)s,tbl6.name_parameter);
 tbl6 = tbl6(I,:);
 
 tbl4 = tbl3;
-for i = 5:12
+for i = 5:10
     v = tbl3.Properties.VariableNames(i);
     tbl4.(v{1}) = cellfun(@(s)sum(abs(diff(s))),tbl3.(v{1}));
 end
 
 tbl7 = tbl6;
-for i = 5:12
+for i = 5:10
     v = tbl6.Properties.VariableNames(i);
     tbl7.(v{1}) = cellfun(@(s)sum(abs(diff(s))),tbl6.(v{1}));
 end
 
-tbl8 = [groupsummary(tbl4,"isConstp53","none","mean",tbl4.Properties.VariableNames(5:12));
-groupsummary(tbl7,"isConstp53","none","mean",tbl4.Properties.VariableNames(5:12))];
+tbl8 = [groupsummary(tbl4,"isConstp53","none","mean",tbl4.Properties.VariableNames(5:10));
+groupsummary(tbl7,"isConstp53","none","mean",tbl4.Properties.VariableNames(5:10))];
 
 %% the first moment
 label_para = ["{\itα}_{\itp}" "{\itβ}_{\itp}",...
