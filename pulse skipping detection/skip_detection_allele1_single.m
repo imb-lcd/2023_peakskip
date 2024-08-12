@@ -154,7 +154,6 @@ for i=2:length(plocs)-1
         skip_ratio=vertcat(skip_ratio,riv);
         fft_range=vertcat(fft_range,[path(x3,2), path(x4,2)]);
         
-        
         skip_p53(path(xx5,2):path(xx6,2))=pTot(path(xx5,2):path(xx6,2));
         skip_mdm2((path(xx5,1)):(path(xx6,1)))=M1Tot((path(xx5,1)):(path(xx6,1)));
         

@@ -53,7 +53,6 @@ warp_p53 = pTot(path(:,2));
 warp_mdm2 = M2Tot(path(:,1));
 
 %% Plot warped signals
-
 figure('Position',[959   694   958   300])
 nexttile(1)
 plot(warp_p53,'LineWidth',1.5);
@@ -77,10 +76,12 @@ skip_mdm2_dtw=NaN(size(warp_mdm2));
 skip_start_dtw=NaN(size(warp_mdm2));
 skip_duration=[];
 skip_duration_dtw=[];
+
 fft_range=[];
 riseloc=[];
 skip_per_p53=[];
 skip_ratio=[];
+
 
 for i=2:length(plocs)-1
     
