@@ -19,7 +19,7 @@ beta_m = 1/L0; % units: [1/h]
 
 % Factor for KD treatments
 gamma1 = 1;
-gamma2 = 10;
+gamma2 = 10; % gamma2 = 10 to mimic the knockdown of MDM2 allele
 
 % Mdm2 protein
 alpha_M = 1/L0; % units: [1/h]
